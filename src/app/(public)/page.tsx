@@ -87,7 +87,7 @@ export default async function HomePage() {
               style={{ willChange: "transform" }}
             >
               {(latestNews.length > 0 ? latestNews : []).concat(latestNews).map(
-                (p, i) => (
+                (p: any, i: any) => (
                   <li key={i} className="flex shrink-0 items-center gap-2">
                     <span className="opacity-60">•</span>
                     <Link href={`/${p.category.slug}/${p.slug}`} className="hover:underline">
