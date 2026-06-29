@@ -1,0 +1,143 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "library"
+}
+
+datasource db {
+  provider  = "postgresql"
+}
+
+model Sport {
+  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name       String
+  slug       String     @unique
+  categories Category[]
+}
+
+model Category {
+  id       String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sport_id String  @db.Uuid
+  name     String
+  slug     String  @unique
+  sport    Sport   @relation(fields: [sport_id], references: [id])
+  posts    Post[]
+  tags     Tag[]
+}
+
+model Post {
+  id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  author_id       String        @db.Uuid // Refers to Supabase auth.users
+  category_id     String        @db.Uuid
+  title           String
+  slug            String        @unique
+  content         String        @db.Text
+  cover_image_url String?
+  status          PostStatus    @default(draft)
+  is_featured     Boolean       @default(false)
+  is_sponsored    Boolean       @default(false)
+  created_at      DateTime      @default(now())
+  updated_at      DateTime      @updatedAt
+  
+  category        Category      @relation(fields: [category_id], references: [id])
+  post_tags       PostTag[]
+  reactions       Reaction[]
+  comments        Comment[]
+  ad_analytics    AdAnalytics[]
+}
+
+model Tag {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  category_id String?   @db.Uuid
+  name        String
+  slug        String    @unique
+  
+  category    Category? @relation(fields: [category_id], references: [id])
+  post_tags   PostTag[]
+}
+
+model PostTag {
+  post_id String @db.Uuid
+  tag_id  String @db.Uuid
+  
+  post    Post   @relation(fields: [post_id], references: [id], onDelete: Cascade)
+  tag     Tag    @relation(fields: [tag_id], references: [id], onDelete: Cascade)
+
+  @@id([post_id, tag_id])
+}
+
+model Reaction {
+  id           String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  post_id      String       @db.Uuid
+  type         ReactionType
+  session_hash String
+  
+  post         Post         @relation(fields: [post_id], references: [id], onDelete: Cascade)
+}
+
+model Comment {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  post_id     String   @db.Uuid
+  user_id     String?  @db.Uuid // Refers to Supabase auth.users, nullable for guests
+  guest_name  String?
+  content     String   @db.Text
+  is_approved Boolean  @default(false)
+  created_at  DateTime @default(now())
+  
+  post        Post     @relation(fields: [post_id], references: [id], onDelete: Cascade)
+}
+
+model Ad {
+  id           String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title        String
+  image_url    String
+  target_url   String
+  placements   AdPlacement[]
+  status       AdStatus      @default(active)
+  start_date   DateTime?
+  end_date     DateTime?
+  
+  ad_analytics AdAnalytics[]
+}
+
+model AdAnalytics {
+  id         String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ad_id      String       @db.Uuid
+  event_type AdEventType
+  placement  AdPlacement
+  post_id    String?      @db.Uuid
+  created_at DateTime     @default(now())
+  
+  ad         Ad           @relation(fields: [ad_id], references: [id], onDelete: Cascade)
+  post       Post?        @relation(fields: [post_id], references: [id], onDelete: SetNull)
+}
+
+enum PostStatus {
+  draft
+  published
+}
+
+enum ReactionType {
+  like
+  fire
+  goal
+  shock
+}
+
+enum AdPlacement {
+  hero_banner
+  sidebar
+  inline_post
+}
+
+enum AdStatus {
+  active
+  paused
+}
+
+enum AdEventType {
+  impression
+  click
+}
