@@ -123,10 +123,10 @@ export default async function ArticlePage({
           <ReactionModule 
             postId={post.id} 
             initialCounts={{
-              like: post.reactions.filter(r => r.type === "like").length,
-              fire: post.reactions.filter(r => r.type === "fire").length,
-              goal: post.reactions.filter(r => r.type === "goal").length,
-              shock: post.reactions.filter(r => r.type === "shock").length,
+              like: post.reactions.filter((r: any) => r.type === "like").length,
+              fire: post.reactions.filter((r: any) => r.type === "fire").length,
+              goal: post.reactions.filter((r: any) => r.type === "goal").length,
+              shock: post.reactions.filter((r: any) => r.type === "shock").length,
             }}
           />
           <div className="h-px bg-border my-2" />
