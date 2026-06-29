@@ -160,7 +160,7 @@ export default async function ArticlePage({
           {post.post_tags.length > 0 && (
             <div className="mt-12 pt-8 border-t border-border flex flex-wrap items-center gap-2">
               <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider mr-2">Tags</span>
-              {post.post_tags.map(pt => (
+              {post.post_tags.map((pt: any) => (
                 <Link 
                   key={pt.tag_id} 
                   href={`/tags/${pt.tag.slug}`} 
@@ -178,7 +178,7 @@ export default async function ArticlePage({
             
             {post.comments.length > 0 ? (
               <div className="space-y-6 mb-12">
-                {post.comments.map(comment => (
+                {post.comments.map((comment: any) => (
                   <div key={comment.id} className="p-6 rounded-xl border border-border bg-card">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-3">
