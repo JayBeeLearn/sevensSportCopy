@@ -18,7 +18,7 @@ export async function login(formData: FormData) {
     redirect("/admin/login?error=Invalid credentials");
   }
 
-  revalidatePath("/admin/layout");
+  revalidatePath("/admin", "layout");
   redirect("/admin/dashboard");
 }
 
@@ -36,6 +36,6 @@ export async function signup(formData: FormData) {
     redirect("/admin/register?error=Could not create account");
   }
 
-  revalidatePath("/admin/layout");
+  revalidatePath("/admin", "layout");
   redirect("/admin/dashboard");
 }

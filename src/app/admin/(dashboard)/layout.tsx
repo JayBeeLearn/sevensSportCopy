@@ -3,6 +3,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 
+import MobileAdminNav from "./MobileAdminNav";
+
 export default async function AdminLayout({
   children,
 }: {
@@ -21,9 +23,24 @@ export default async function AdminLayout({
     redirect("/admin/login");
   }
 
+  const signOutNode = (
+    <form action={async () => {
+      "use server";
+      const supabase = await createClient();
+      await supabase.auth.signOut();
+      redirect("/admin/login");
+    }}>
+      <button className="flex w-full items-center px-3 py-2 text-sm font-medium rounded-lg text-red-500 hover:bg-red-500/10 transition-colors">
+        <LogOut className="h-4 w-4 mr-3" />
+        Sign out
+      </button>
+    </form>
+  );
+
   return (
-    <div className="min-h-screen bg-muted/30 flex">
-      <aside className="w-64 border-r bg-card h-screen sticky top-0 flex flex-col hidden md:flex">
+    <div className="min-h-screen bg-muted/30 flex flex-col md:flex-row">
+      <MobileAdminNav userEmail={user?.email || ""} signOutNode={signOutNode} />
+      <aside className="w-64 border-r bg-card h-screen sticky top-0 flex-col hidden md:flex">
           <div className="h-16 flex items-center px-6 border-b">
             <ShieldCheck className="h-6 w-6 text-primary mr-2" />
             <span className="font-bold tracking-tight text-lg">Admin Panel</span>
@@ -60,20 +77,10 @@ export default async function AdminLayout({
                 <span className="text-xs text-muted-foreground">Administrator</span>
               </div>
             </div>
-            <form action={async () => {
-              "use server";
-              const supabase = await createClient();
-              await supabase.auth.signOut();
-              redirect("/admin/login");
-            }}>
-              <button className="flex w-full items-center px-3 py-2 text-sm font-medium rounded-lg text-red-500 hover:bg-red-500/10 transition-colors">
-                <LogOut className="h-4 w-4 mr-3" />
-                Sign out
-              </button>
-            </form>
+            {signOutNode}
           </div>
         </aside>
-      <main className="flex-1 flex flex-col min-h-screen">
+      <main className="flex-1 flex flex-col min-h-screen overflow-x-hidden">
         {children}
       </main>
     </div>

@@ -9,8 +9,8 @@ export function SubmitButton() {
   return (
     <button
       type="submit"
-      disabled={pending}
-      className="w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
+      aria-disabled={pending}
+      className={`w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors flex items-center justify-center gap-2 ${pending ? 'opacity-70 pointer-events-none' : ''}`}
     >
       {pending ? (
         <>
